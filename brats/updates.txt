@@ -1,0 +1,631 @@
+
+BRATS Software Updates
+
+2.6.3 - Released: 14/07/17
+
+ - Fixed an bug in calculation of the spectral index errors when only 2 data frequencies are used. Fitting where n_maps > 2 is unaffected.
+
+ - Improved the error handling of specchisquared.
+
+
+2.6.2 - Released: 30/06/17
+
+ - Added further support for GLEAM headers.
+
+ - Added the 'standard' propagation of errors method for the spectral index fitting of data sets containing only 2 frequencies. The standard deviation for the weighted least squares fit remains the default for data sets with 3 or more frequencies.
+
+ - Added the forceerrortype command which reverts errors on the spectral index for data sets with only 2 frequencies to the previous standard deviation method.
+
+ - Updated the BRATS help command and cookbook to reflect recent changes.
+
+
+2.6.1 - Released: 06/06/17
+
+ - Fixed an error that was causing the X and Y coordinates to be inverted for the shiftimage command and certain exportdata options. Note this impacts only the graphical output and model fitting values are not affected.
+
+ - Expanded the help text available at startup through the -h option
+
+
+2.6.0 - Released: 29/05/17
+
+Installation:
+
+ - The BRATS installation files will now be contained within their own folder when extracted.
+
+Header support:
+
+ - Added support for the GLEAM survey header type.
+
+ - Added support for the Miriad header type.
+
+
+New features and function changes:
+
+ - BRATS now supports completion of commands using the tab key in a similar fashion to most shell environments (e.g. lo -> tab -> load). Double tab will list all commands partially matching the entered text (e.g. spec -> tab tab -> specagemap, specchisquared, specindex...).
+
+ - Spectral index error maps are now available using the command specindexerrors. Values are based on weighted least square fiting errors (details of which are available in the manual) and requires the specindex command to have been run in the default WSL mode prior to use.
+
+ - It is now possible to extend the CI(off) model data outside of the observed frequency range when fitting using the extendmodel command.
+
+ - It is now possible to increase the size of text in maps and plots via the largetext command. This increases all titles, axis labels, and informational text by 40 per cent. This will make the axis more suited to most publication formats.
+
+ - It is now possible to use the skip command when plotting example models, in a similar manner to the CI examples. The value of skip corresponds to the number of Myrs. For example, where modelmyears=100, minmodelmyears=10, and skip=10, plotjpmodel will output example JP spectra at 10, 20, 30... 100 Myr.
+
+ - It is now possible to change the colours used for mapping using the new colorscheme command. Colour schemes can be inverted using the new invertcolours command.
+
+ - The spectral index data output by the exportdata command (option 12) now includes a second column giving the associated errors.
+
+ - The setregions command will now display an error and remain "not set" if the resulting number of regions is 0.
+
+ - Fitting commands will now check that data sets have a minimum of two images before proceeding. Loading of a single image is still allowed for the purpose of applying regions across data sets.
+
+ - Model data commands (e.g. jpdata, cidata etc.) now output values distributed uniformly in log space (previously normal space).
+
+ - When exporting CI(off) models, the resulting data files now follow the naming convention: CI_Fitting_Results_Userinput.dat and CIOff_Fitting_Results_Userinput.dat
+
+
+Graphical updates:
+
+ - Exported maps have been reformatted to better suit being placed in publications, including less whitespace around edges. Maps displayed on screen remain unchanged.
+
+ - Plots now display units for the spectral age.
+
+ - To accommodate the new large text option, model parameter details have been moved to the bottom left and beam to the bottom right corners of output maps.
+
+ - The beam position will now scale as a function of the viewport size to better account for zoomed maps. As such, the input values for the beampos command now expects a percentage along the corresponding axis (previously pixels).
+
+ - The borders command now works as a fraction of the total width of the plotted map. This means less manual adjustment should be required for zoomed images. The fraction is measured from the X axis dimension and, as PGPLOT requires an integer value, take the conservative approach of always rounding decimal value upwards (e.g. 2.3 --> 3 pixels).
+
+ - Fixed a bug, noticeable at high zoom levels, that was causing the box around the maps to be drawn twice.
+
+ - Fixed an error that was causing maps to be shifted by half a pixel in the positive x and y directions.
+
+ - Adjusted some map titles to better suit the large text format when exported.
+
+ - When exporting maps with a contour overlay the file name will now be appended with "_Contours_".
+
+ - Added a warning to CI(off) model fitting when skip is set to > 1.
+
+ - Minor text corrections in user interface.
+
+ - Added various additional useful help text throughout.
+
+ - Added the source name/index to the terminal output when fitting CI(off) models.
+
+ - Removed the binning table output for CI(off) model fitting when only 1 region is present.
+
+ - The spectral index error is now included in plotspecindex plots.
+
+ - The data label for plotspecindex has been move closer to the bottom left corner.
+
+
+Default values:
+
+ - Default myears now set to 100 (previously 10).
+
+ - To account for the change in the beam input format, the default beam position values have been changed to 95 and 5 per cent along the X and Y axis accordingly.
+
+ - Default border values now set 3 per cent of the (zoomed) image size to account for the new.
+
+ - Fitting of CI(off) models will now exit gracefully when encountering blank data sets or those with no matching data pairs.
+
+ - Long file names should no longer be cut off when exporting.
+
+
+Cookbook and help:
+
+ - Added the new tasks and features to the cookbook and help command.
+
+ - Removed the incorrectly listed dataset parameter for fitintegrated, fitcimodel, and the fitcioff commands.
+
+ - Changed border and beampos help text to reflect the change to fractional distances.
+
+ - Added the export format for CI model data to Section 3.4.6.1 of the cookbook.
+
+ - Fixed various typos.
+
+
+Bug fixes and other miscellaneous changes:
+
+ - Fixed an error that was causing BRATS to crash when fitcimodel and fitcioff were run and the model resolution was different from the default.
+
+ - Fixed a bug in the error handling that would cause BRATS to crash when certain information was missing from the header.
+
+ - Fixed an error that caused setregions not to plot correctly when setting regions for multiple data sets simultaneously.
+
+ - Load now catches cases where the RMS of a map cannot be calculated (i.e. NaN and inf). This is usually caused by the background region being defined outside the edge of the image.
+
+ - Exportdata (option 16) now correctly outputs region flux values for all frequencies.
+
+ - Exportdata (option 16) now correctly accounts for regions larger that 1 pixel in size.
+
+ - Implemented error handling for cases where imageloc and dataloc become inaccessible after BRATS has started and/or the paths have been changed.
+
+
+------------------------------------------------------------------------
+
+Known Issues
+
+1. If the fits header is too long, the funtools library will cause the program to crash out with the error 'no WCS information in file while parsing filter at: XX:XX:XX.XXX'. This normally occurs due to a large history accumulated during reduction and can be fixed by running the AIPS Stalin command or history=False when exporting in CASA.
+
+2. There is a known bug in some versions of GSL that causes the chi-squared CDF function to fail, particularly for a large number of DoF or very low chi-squared values. The suppressconf command has been included as a work around but this can also sometimes throw up oddities when mapping later on. In such cases exporting the data via exportdata and mapping in an external program is recommended or, ideally, update GSL to a version where this issue has been resolved.
+
+3. The default GCC compiler that comes preinstalled with MacOS does not support multicore processing. This will cause an error during installation similar to: "FATAL:/somelocalpath/as/x86_64/as: I don't understand 'm' flag!". This can be resolved by installing the latest version of GCC.
+
+4. The new fixed width when exporting png images sometimes cuts off long title names and/or the beginning of the xaxis scale label. This will be addressed at a later date but is currently worth sacraficing for the sake of easier to produce publication images. The xaxis scale issue usually only occurs on high zooms, and can be fixed by slightly adjusting the zoom value.
+
+5. When outputting in FITS format, certain header parameters (e.g. CTYPE) are grouped together rather than set out in the traditional format. This appears to be a FUNTOOLS issue.
+
+6. When using linear plots, the colour wedge scale is limited to 4 orders of magnitude. This appears to be a PGPLOT issue. The default is currently set to using a log scale which works around this problem for now.
+
+
+------------------------------------------------------------------------
+
+
+2.5.0 - Released: 22/04/16
+
+Models:
+
+ - Added CI and CI off (KGJP) models for use on integrated fluxes. This function allows automated fitting of multiple sources/regions via a comma delimited text file. See the manual for further details and usage (section 3.4.6).
+
+ - Added example CI and CI off model plots available through the plotcimodel and plotcioff commands.
+
+
+Interface:
+
+ - Changed the way the BRATS console works. Now includes a command history (by pushing the up and down arrow keys), moving between characters in the current command (left/right arrows, home, end etc.), and auto completion of file names and directory paths using tab. This requires readline to be installed (available by default on most linux/mac distributions) and the addition of -lreadline to the gfortran section of the Makefile. New Makefile examples have been uploaded to the website.
+
+ - The new console format resolves the long standing issue of the main command line outputting multiple times due to the buffer retaining the new line character when flushed.
+
+ - Commands no longer exit to the main console on invalid entries.
+
+ - The display format and selection numbers of the exportdata command has been changed. This should make it much easier to use, but requires any old scripts to be updated with the new selection numbers.
+
+
+Parameters and commands:
+
+ - It is now possible to export maps in FITS format which can be turned on and off using the new exportasfits command. Applies to the specagemap, chisquaredmap, errormap, specindex, specchisquared, and injectionmap commands. Areas outside of the set regions are marked as NaN. Off by default.
+
+ - Findinject now retains information on the best fitting injection index for each individual region. These values can be mapped using the injectionmap and their corresponding chi-squared values with the injectionchimap commands. See Section 3.5.2 of the BRATS cookbook for further information.
+
+ - Added the ability to export the injectionmap and injectionchimap data to the exportdata command.
+
+ - The fullexport command now exports data in a new, improved format (V2). Old V1 format data can still be used and will be automatically converted by the fullimport command, but results should be checked.
+
+ - It is now possible to manually set the RMS noise of individual images and/or whole data sets using the rmsnoise command.
+
+ - It is now possible to set a minimum for the age search range using the minmyears command. This applies to both single injection (e.g. fitjpmodel) and integrated (e.g. fitcioff) models.
+
+ - It is now possible to set a minimum when plotting example ageing models using the minmodelmyears command. This applies to both single injection (e.g. plotjpmodel) and integrated (e.g. plotcioff) models.
+
+ - Added functions to export example model data (jpdata, kpdata, tribbledata, cidata and cioffdata commands). These functions use the standard example model plotting parameters to plot either a range of ages or one specific age. Data is output at an arbitrary normalization.
+
+ - Added the dataintervals command which sets the number of intervals at which example model data is sampled.
+
+ - It is now possible to set the redshift of example models using the modelredshift command.
+
+ - Added the targetname command which allows the name of a given target/data set to be changed. This is particularly useful when using using titles in plots and the FITS header is missing the name information.
+
+ - Checking the validity of the injection index search range is now performed when findinject is run, rather than when they are set by the mininject and maxinject commands (i.e. mininject can now temporarily be set higher than maxinject).
+
+ - Sigma is now a float (instead an integer) allowing more flexibility in the flux cut.
+
+ - Adjusted the settings of the hotpixels command. 0 is now used to turn off hot and cold pixel error checking and -1 to exit the command without adjusting the current value.
+
+ - Setregions and applyfixedregions now use smooth map format. This can be reverted to the old style in the usual manner via the smoothmaps command.
+
+ - Fullexport now uses space delimited format when exporting findinject data, rather than tab delimited, as was originally intended.
+
+ - Zoom and shiftimage are now applied to setregions and applyfixedregions when using smooth map format.
+
+ - Added the suppressconf command which stops the chi-squared confidence level tables from being automatically output. This is useful for avoiding errors where the number of DoF of a data set is larger than can be handled by the CDF function (also see known issues).
+
+ - Relaxed the normalization search criteria to include a wider range of values.
+
+ - Relaxed the hotpixel criteria from a minimum of 4 to 3 pixels required for the check to be valid.
+
+ - The colourcolour command now uses rest frequencies when plotting, rather than observed frequencies.
+
+ - Reversed the sign convention of alpha in the colourcolour command to be consistent with other functions (S propto nu^-alpha).
+
+ - Resizeimages now output a line to the FITS history indicating the images has been modified along with the new image dimensions.
+
+ - Checking of units and source name in the FITS headers during load is no longer case sensitive.
+
+ - Checking of units and source name in the FITS headers during diffmap is no longer case sensitive.
+
+ - Updated the FITS header output by diffmap to be BRATS specific. Uses the map subtracted from to retrieve basic properties (e.g. RA, DEC).
+
+ - Updated resizeimages to include a line in the FITS history indicating that the image has been resized using BRATS.
+
+ - Updated the FITS header output by mapfrommodel to be BRATS specific. Uses the first map loaded to retrieve basic properties (e.g. RA, DEC).
+
+ - Commands containing the word 'colour' now accept the British and US spellings.
+
+
+Cookbook and help:
+
+ - Updated the cookbook to indicate that the background region (and where applicable source regions), should usually be in pixel coordinates. This impacts significantly on tightly fitted regions, or where there is a large difference in coordinates between maps.
+
+ - Added the new commands and parameters to the cookbook and help console.
+
+ - Corrected various typos in the cookbook and help console.
+
+ - The cookbook PDF meta data has been updated to be more informative.
+
+
+Performance and output:
+
+ - Improved the tolerance handling of the BPA when attempting to match map values during a load.
+
+ - Only one warning message is now produced when the source names in the FITS header do not match. Any future instances are suppressed.
+
+ - Load now displays a warning, rather than an exiting with an error, when the rotation angles cannot be found in the image header.
+
+ - The plotspecindex command now scales the Y-axis of each plot individually when autoscaling is enabled.
+
+ - The plotmodelobs command now scales the Y-axis of each plot individually when autoscaling is enabled.
+
+ - Improved the error handling of non-square images and added advice on a common solution.
+
+ - Updated the error handling of the conflevels command to better deal with large DoF.
+
+ - Corrected a wording error in the prompt text of the shiftimage command.
+
+ - Corrected a wording error in the prompt text of the beampos command.
+
+ - Corrected a wording error in the error handling of mapping functions.
+
+ - Updated some wording in the help prompt to make navigation easier. 
+
+ - Default maximum number of maps increased to 100.
+
+ - The end of all commands are now trimmed for whitespace.
+
+ - Cleaned up the formatting of some of the selection tables.
+
+ - Findinject now dynamically allocates memory to prevent a segfault occurring under certain circumstances.
+
+ - Increased the memory available to datasettype to a prevent buffer overflow under certain conditions.
+
+ - The fluxcalerror command is now more explicit about which data were skipped when processing multiple data sets.
+
+ - Diffmap filename output now includes a time stamp to help prevent accidentally overwriting previous output.
+
+ - Mapfrommodel filename output now includes a time stamp to help prevent accidentally overwriting previous output.
+
+
+Bug fixes:
+
+ - Fixed a bug that was causing the shiftimage and zoom functions (particularly when using both together) to plot incorrectly. This includes shifting outside of the map range (i.e. when part of the plot is outside of the original image). Under these conditions, the area outside of the map is plotted as the background colour. This fix has been applied to specindex, setregions, fluxmaps (including load), fixedregions, specagemap, chisquaredmap and errormap.
+
+ - Fixed an memory error that would occasionally cause BRATS to crash if multiple data sets were loaded, regions set and models fitted in a certain order.
+
+ - Corrected an error where the non-reduced 99.9 per cent chi-squared value was output instead of the 99.99 per cent value.
+
+ - Corrected an error in the colourcolour command that could cause the incorrect maps to be selected.
+
+ - Fixed an error in fullexport that was preventing data from being exported in its uncompressed format.
+
+ - Fixed an error that would under certain circumstances cause a fault when importing a dataset that has no target name in the .brats header (fix applies to newly exported datasets only).
+
+ - Fixed an error in fullexport that was causing the KP and Tribble model data to be incorrectly loaded when imported again.
+
+ - Fullimport should now import any findinject data correctly.
+
+ - Fixed a error that was causing BRATS to exit when calculating spectral index values and duplicate entries are found.
+
+ - Fixed a error that would under certain circumstances cause a 2 pixel region to be formed and reported when the maximum search area was set to 1.
+
+ - Corrected an offset between the general mapping and setregion display methods. Affected plotting only.
+
+ - Fixed an error in the diffmap command that caused BRATS to crash if regions were limited to a dataset, but that dataset was of a different size to the images being compared.
+
+ - Fixed an error in load that would cause BRATS to crash if multiple datasets of different sizes were loaded and the second dataset was smaller.
+
+ - Findinject no longer returns the user to the main command prompt if an invalid model is selected.
+
+ - Fixed an error that would occasionally cause BRATS to crash when using the colourcolour command on large datasets.
+
+ - Plotspecindex no longer skips the first plot when outputting to screen.
+
+ - Fixed an error in plotmodelobs causing the KP and Tribble models to not be correctly plotted if the JP model had not yet been fitted. Affected plotting only.
+
+ - The output map of specindex will now correctly zoom for non-integer values.
+
+ - Improved the error handling of the fixedregions command.
+
+
+--------------------------------------------------------------------
+
+2.4.1 - Released: Internal Only
+
+ - Improved the way the load command handles the checking of header values to allow for a wider variety of formats.
+
+ - Added support for additional CASA header types.
+
+ - Corrected an error causing the beampos command to be inaccessible.
+
+--------------------------------------------------------------------
+
+2.4.0 - Released: 01/02/2015
+
+ - First public release!
+
+ - The full BRATS manual and tutorial is now available on the website.
+
+ - A Mac version of BRATS is now available.
+
+ - The help command has had a complete overhaul to make it more user friendly.
+
+ - Tasks run from the main command prompt are no longer case sensitive.
+
+ - Changed the default data type to CASA (previously AIPS). Note this only is applied when the reduction method is not stated in the image header.
+
+ - The correct centre pixel value (CRPIX1/2) is now output to the FITS image header when using the resizeimage command.
+
+ - Fixed an error that was causing specres to be set to plotres when attempting to enter a value below the minimum allowed value.
+
+ - Fixed an error when fitting integrated flux values which sometimes caused BRATS to quit unexpectedly.
+
+ - Fixed an error causing the fullimport command to set the Tribble model resolution size incorrectly.
+
+--------------------------------------------------------------------
+
+2.3.1 - Released: 28/10/14
+
+ - Spectral index fitting will now use a weighted least squares method by default. This can be reverted back to the standard (non-weighted) fitting through the specindexcalctype command.
+
+ - When spectral indices are fitted using the (GSL) weighted least squared method, the flux values of each region with the best fitting spectral index overlaid can be plotted using the specindexplot command. The number of plots produced can be modified by using the skip command in the normal manner.
+
+ - When spectral indices are fitted using the (GSL) weighted least squared method, a chi-squared map of the fitting values can be produced using the specchisquared command.
+
+ - Added functions to allow tye export (fullexport) and import (fullimport) of entire datasets, including any model fitting which has been run. By default, the data is exportted in in a 'compressed' format which primarily removed the reason as to why certain pixels are excluded during the region selection process (all excluded regions are set to -1, below flux limit, when imported again). This significantly reduces the size of the exported dataset and should be sufficient for most purposes. Exporting in full format data can be enabled through the exportcompression command.
+
+ - Added errors to the spectral ages, determined by locating a delta X^2 of 1 in the standard manner (Avni 1976). The exact value is found by linearly interpolating between the closest 2 data points to a delta X^2 of 1. Fitting of a C-spline will be added in a later update, but this should provide accurate errors in most cases. Accurancy can be improved by increasing the age resolution of model fitting (ageres). In cases where we are constrained by a zero age, the error is given to be the size of the measurement e.g. 0.5 +1.2 -0.5 Myrs.
+
+ - Corrected an bug that was causing incorrect coordinates when shifting the image with scaletype 3 (note that the setregions display can still not yet shift images).
+
+ - Fixed a bug which was causing the input path of diffmap files to be appended with a non-ASCI character.
+
+ - Diffmap will now check for existance and readability of the input files at an earlier stage to prevent BRATS crashing under certain circumstances.
+
+ - Diffmap will now no longer send you back to the main console when a file does not exist, but will instead ask you to reenter the file location.
+
+ - Diffmap should no longer throw a segmentation fault when attempting to escape the task at the region selection stage.
+
+ - Updated the help command to include a few commands which were previously not listed.
+
+
+------------------------------------------------------------------------
+
+2.3.0 - Released: 13/03/2014
+
+ - Fixed a typo that was causing spectral ages to be underestimated.
+
+ - Change the defaults of signaltonoise and searcharea to 1, as this now appears to be the most common usage.
+
+ - A redshift value for the target source is now required on load.
+
+ - Fixed an error causing IC/CMB losses to be underestimated.
+
+ - Fixed a bug causing the scaling of example models to be outside of the plot area.
+
+
+------------------------------------------------------------------------
+
+2.2.1 - Released: 13/02/2014
+
+ - Added an option to export the region array table. This allows other tables (e.g. spectral ages) to be referenced and plotted as a function of X and Y in external scripts such as IDL. Format: X Y region, text format, space delimited. Values <= 0 are flagged and so should be considered a null value. Warning: This size of this file can be quite large!
+
+ - Changed checking of pixel size to a tolerance rather than an exact match to allow model data to be tested. This is currently set to a sensible fixed value but will be made adjustable in a future update.
+
+ - Changed the way in which some header variables are handled
+
+
+------------------------------------------------------------------------
+
+2.2.0 - Released: 23/09/2013
+
+ - Added a function to allow scaling of flux values for either all or a subsection of maps. This is particularly useful for adjusting JVLA data to the recent Perley & Butler (ApJ. 204, 19, 2013) adjusted calibrator values. This can be accessed via the scaleflux command and region selection should be re-run after this scaling has been applied.
+
+ - Added a function to allow the centre of output images to be shifted by a user input. This function can be accessed using the shiftimage command. This command only changes the output images (either on screen or exported), not the raw data. Note that shifting is not currently implimented for 'setregions' and will be added in a later update.
+
+ - BRATS should now fully support maps made using CASA and AWImager.
+
+ - Added automatic detection of header types. This will default back to the manual settings (e.g. casadata) if the type cannot be determined.
+
+ - Added a function to allow the centre of the output images to be shifted through the command shiftimages. This is particularly useful when zooming in on a region that is not at the centre of the field.
+
+ - When fitting models, the final output will now show the index number of the oldest region. This is particularly useful when combined with exported region flux values for determining uncertainties.
+
+
+------------------------------------------------------------------------
+
+2.1.1 - Released: 20/05/2013
+
+ - Fixed plotting issues with scale type 3 and the beam
+
+
+------------------------------------------------------------------------
+
+2.1.0 - Released: 05/04/2013
+
+ - Added a function to allow the combining of maps in the image plane. Images are scaled to a user defined frequency by a user defined scaling factor using the combineimages command. Note that the fits header is copied from the first indexed map (which may not be the lowest frequency) with the frequency updated. This is to bypass the problems associated with encoding AIPS embedding of the beam parameters in to the history.
+
+ - Added a function which allows reconstruction of a radio map at any frequency specified by the user based on the best fitting ages and normalisations of a given model. This can be run through the mapfrommodel command. Output uses header of the first indexed map in the dataset directory with a modified frequency. Output a fits file to the standard image directory. The desired model must first be fit to the dataset before this command can be run.
+
+ - Added a function to subtract one image from another. The maps do not need to be loaded, but must currently be matched (size, source etc). Two fits files are loaded and can either be subtracted directly or confined to the regions of a specified dataset, then is output as a third fits file. This can be particularly useful in comparing combined and reconstructed maps to show differences as a function of position. This can be run by using the diffmap command.
+
+ - Added a new statistics for model fitting. Chi-squared values are now also binned to significance levels (<68, 68-90, 90-95, 95-99, >99 per cent). If more than half the regions fall above 95 percent confidence of rejection, then the model is classed as rejected at the median bin level. Bin values are also output. This does not effect any previous statistics or fitting values.
+
+ - Added a feature which when model fitting, now bins the chi-squared value based on confidence levels. An output is then given based on the median value as to whether the model can be rejected at a given level.
+
+ - Example model plots can now be exported
+
+ - Example model title can now be turned on and off using the usual titles command
+
+ - Changed the example model plot colour scheme so the default 0 to 10 Myears now has distinct start and end colours
+
+ - Fixed a race condition on the line colours for example model plots
+
+ - Corrected wording of the injectinterval confirmation
+
+ - Adjusted the wedge size to be larger. This is somewhat unwieldy for screen viewing, but clearer when exported and used in a paper.
+
+ - The RA position when plotting maps was being calculated inversely. This has now been corrected.
+
+ - Fixed a bug which was preventing the Y axis of plotmodelobs from accepting a user defined value.
+
+
+------------------------------------------------------------------------
+
+2.0.1 - Released: 22/02/2013
+
+ - Code is now optimised to a higher level during the compile which should provide a slight increase in speed
+
+ - Exporting of data now name the files correctly
+
+ - Tribble models now output the name to plot details correctly
+
+ - Plot titles now correctly identify the model used
+
+
+------------------------------------------------------------------------
+
+2.0.0 - Released: 15/02/2013
+
+ - Multi-threading has now been added to the model fitting functions via OpenMP. This should provide a significant speed increase on multi-core machines.
+
+ - Fitting of Tribble models has now been added. These can be run via the fittribblejp and fittribblekp commands, where the JP or KP electron energy distribution is integrated over a Maxwell-Boltzmann distribution.
+
+ - Example Tribble models can be run using the plotjptribble and plotkptribble commands.
+
+ - Added the ability to change the flux calibration error on a map by map basis rather than using one fixed value. Changes can be made via the fluxcalerror command and can be for a specific map, all maps or a frequency range over one or all datasets.
+
+ - The flux calibration errors now default to that of the JVLA (2% below Ku band, 5% above) on loading a dataset. This default can be changed via the telescope command, although only JVLA and a flat error across all maps are currently available. Note: setregions (or a similar command) must be re-run after updating any flux calibration errors to ensure the region errors are also updated.
+
+ - Fixed a bug causing the adaptive region search to stop one short of the maximum search area.
+
+ - Fixed a bug causing the 'findinject' command to produce higher than expected chi-squared values.
+
+ - Fixed a bug in which the search criteria used for 'levels' was not scaling correctly when model fitting.
+
+ - Fixed a bug which allowed a search area of 0 to be set.
+
+ - Default injection index reset to 0.6 as this is more useful for most purposes.
+
+ - The y-axis when plotting example models now automatically scales based on the users minimum and maximum desired frequency range.
+
+ - The normres command is redundant due to golden ratio search, but was still available and remained in the help file. Removed where appropriate to avoid confusion.
+
+
+------------------------------------------------------------------------
+
+1.2.1 - Released: 21/01/2013
+
+ - Fixed a wording error at the dataset select prompt when fitting KP and JP models
+
+ - Fixed a memory allocation error in the colour array of adaptive region plotting
+
+ - Fixed an error in the naming of files when exporting flux maps with adaptive regions
+
+ - Fixed an intermittent segmentation fault in the findinject function
+
+------------------------------------------------------------------------
+
+1.2.0 - Released: 15/01/2013
+
+ - The default injection index is now set to 0.8 (previously 0.6).
+
+ - Added the ability to change the scale when mapping using the command scaletype. Defaults to WCS.
+
+ - The reference map for the scale can be changed using the posmap command. This should be set prior to loading if high accuracy is important and / or the WCS in the fits header is located at a pixel far from the centre of the map as this is adjusted during the load. Affects the visual scale only, no data is dependant on this value.
+
+ - Fixed a bug which allowed the zoom to be set to 0.
+
+ - When loading a dataset the RMS noise now outputs the map frequency rather than array index.
+
+ - The beam can now be plotted on maps using the beam command. Default is on. The position of the plot can be moved relative to the X and Y axis using the beampos command. Defaults to X = 10 Y = 10
+
+ - Numerical data (e.g. spectral ages) can now be exported to a line separated text file using the exportdata command. The location of the export can be changed using the dataloc command.
+
+ - The commands to change exported image type and location have now been renamed imagetype and imageloc respectively to accommodate the export of numerical data.
+
+ - Fixed a bug in which model fitting results would be lost from previously fitted datasets if they were fitted individually rather than by the 888 command.
+
+ - The scale and colour wedge for spectral ageing, chi-squared and spectral index maps can now be controlled via the wedgemultiplier command.
+
+ - Fixed an issue where smooth format flux maps were outputting regions with values greater than sigma * rms. This only affects the appearance of the flux maps. Functions using flux values are unaffected.
+
+ - Fixed an issue where attempting to exit the chisquaredmap command at the contour selection screen would cause the program to crash.
+
+ - Model parameters can now be added to plots when comparing a model to observations (plotmodelobs). This can be turned on and off using the usual paramlabels command. On by default.
+
+ - You can now choose between reduced and non-reduced chi-squared values for plots and maps by use of the usereduced command. Reduced is used by default.
+
+ - Chi-squared confidence levels can now be found without the need to create a map using the command conflevels. If no data set is loaded or 888 is entered at the data select screen, you will be prompted for the desired number of degrees of freedom. For existing datasets, DoF = number of maps - 2 (representing the age and normalisation parameters).
+
+ - Plotting of models (e.g. plotjpmodel) now automatically scales the y axis to sensible values when varying model parameters e.g. the magnetic field strength.
+
+ - The number of Myears that are output when plotting models (e.g. plotjpmodel) can now be changed using the modelmyears command. Models will output from 0 Myears to this number at intervals of 1 Myear.
+
+ - Corrected an issue which the autoscaling of plotflux
+
+ - Added the ability to force an integrated flux across the whole of a region file. This creates one large region, rather than the many created by setregions. The region is cut only by sigma*RMS. This can be used via the setsingleregion command. Note: This should not be used when region size << beam size. The error checking performed when setting regions in this way is also much less rigorous than with the setregions command e.g. maptomap and hotpixels are not applied. We leave it to the user to ensure the region is large enough, sits in a sensible region and reaches the desired signal to noise ratio.
+
+ - Added a function which attempts to find the best fitting injection index of a dataset to a model. This can be run by the findinject command. The maximum and minimum search range can be set by mininject and maxinject respectively with intervals set by injectintervals. Warning: This function can take a VERY long time to run, especially if multiple models over multiple datasets are being attempted.
+
+
+------------------------------------------------------------------------
+
+1.1.0 - Released: 20/12/12
+
+ - Added KP model fitting. Uses the same parameters as the JP model e.g. injectionindex, bfield etc. and can be run using the fitkpmodel command.
+
+ - Added plotting of an example KP model. Can by run by the plotkpmodel command.
+
+ - Added an average normalisation output to the end of the model fitting.
+
+ - The injection index and magnetic field strength used on each model is now output at the end of plotmodelobs.
+
+ - Model name and parameters can now be added to the spectral age and chi-squared maps. Can be turned on and off using the paramlabels command. On by default.
+
+ - Commonly used significance intervals for a given data set's degrees of freedom are output based on an incomplete gamma function using the GSL CDF function. This occurs after model fitting and before producing the first chi-squared map.
+
+ - Fitting can now output if a model can be rejected if the average chi-squared for the dataset is above the 90 per cent confidence level. Note: If there are a number of regions where you expect a bad fit e.g. from dynamic range issues, then the average may not be a suitable value to use. This can be turned on using the printreject command, off by default.
+
+ - Added the ability to change the maximum and minimum gamma values for model fitting through the commands gmax and gmin respectively.
+
+
+------------------------------------------------------------------------
+
+1.0.2 - Released: 20/12/12
+
+ - Default levels set to 3. This should adequate for most fitting runs but recommend a value of 5 for publication purposes.
+
+ - Added the ability to set the minimum range of spectral age maps to zero. Note: This applies to the colour wedge only and does not change the data. This can be turned on and off using the command 'alwayszeroage'. Turned on my default.
+
+ - Default maximum age when model fitting (myears) reduced to 10.
+
+ - Added units to the spectral ageing map wedge label.
+
+ - Printing of results during model fitting is now set to off by default. This should bring a slight improvement to the time it takes to run the model fits. An average chi-squared value will still be output on completion.
+
+ - Added a sum of chi-squared output to the end of the model fitting.
+
+
+------------------------------------------------------------------------
+
+Known Issues Now Resolved:
+
+(Fixed in Ver. 2.5.0) When cmdlen > MAXCMDLENGTH it wraps and prints multiple command prompts. Only applies to the main command prompt. MAXCMDLENGTH has been set to a high value to compensate and should be lowered to save memory when fixed.
+
+(Fixed in Ver. 2.5.0) Certain commands push 2 command lines prompts on exit.
+
+(Fixed in Ver. 2.5.0) When a string is entered where an integer is expected, it exits with a 2 command lines and an unknown command error. This is likely due to the buffer still being full, but there is no reliable way of clearing it. A temporary exit has been implemented until a work around can be found.
+
+(Fixed in Ver. 2.1.2) CASA data currently will not load due properly due to the header data having a different format to that of AIPS. This will be fixed in an upcoming patch.
+
+
+
