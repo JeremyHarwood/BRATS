@@ -25,3 +25,11 @@ A Python wrapper and tools for automated image alignment can be found at:
 [Image Alignment Tool (DS9)](https://github.com/JeremyHarwood/bratsimagealignment "Image Alignment Tool (DS9)")
 
 [Image Alignment Tool (CASA)](https://github.com/JeremyHarwood/bratsimagealigner_casa "Image Alignment Tool (CASA)")
+
+
+## Known issues
+
+- If the fits header is too long, the funtools library will cause the program to crash out with the error 'no WCS information in file while parsing filter at: XX:XX:XX.XXX'. This normally occurs due to a large history accumulated during reduction and can be fixed by running the AIPS Stalin command or history=False when exporting in CASA.
+- There is a known bug in some versions of GSL that causes the chi-squared CDF function to fail, particularly for a large number of DoF or very low chi-squared values. The suppressconf command has been included as a work around but this can also sometimes throw up oddities when mapping later on. In such cases exporting the data via exportdata and mapping in an external program is recommended or, ideally, update GSL to a version where this issue has been resolved.
+- When outputting in FITS format, certain header parameters (e.g. CTYPE) are grouped together rather than set out in the traditional format. This appears to be a FUNTOOLS issue.
+- When using linear plots, the colour wedge scale is limited to 4 orders of magnitude. This appears to be a PGPLOT issue. The default is currently set to using a log scale which avoid this is most cases.
